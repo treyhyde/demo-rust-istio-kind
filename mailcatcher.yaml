@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailcatcher
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      mail: mailcatcher
+  template:
+    metadata:
+      labels:
+        mail: mailcatcher
+    spec:
+      containers:
+      - name: mailcatcher
+        image: joshdvir/alpine-mailcatcher
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailcatcher
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    mail: mailcatcher
+  ports:
+  - port: 1080
+    targetPort: 1080
+    nodePort: 30001
+    name: http
+  - port: 1025
+    targetPort: 1025
+    nodePort: 30002
+    name: smtp

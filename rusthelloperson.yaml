@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloperson
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      hello: person
+  template:
+    metadata:
+      labels:
+        hello: person
+    spec:
+      containers:
+      - name: helloperson
+        image: localhost:5000/rust_hello_person:1.0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloperson
+  namespace: istio-system
+spec:
+  type: ClusterIP
+  selector:
+    hello: person
+  ports:
+  - port: 8000
+    targetPort: 8080
+    name: http

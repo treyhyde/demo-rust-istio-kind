@@ -1,0 +1,19 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: demo-istiocontrolplane
+  namespace: istio-system
+spec:
+  values:
+    gateways:
+      istio-ingressgateway:
+        type: ClusterIP
+  profile: minimal
+  components:
+    ingressGateways:
+      - name: demo-gateway
+        enabled: true
+  addonComponents:
+    kiali:
+      enabled: true
+

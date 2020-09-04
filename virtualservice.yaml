@@ -1,0 +1,43 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: demo-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: cookie-based-route
+  namespace: istio-system
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - demo-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/hello"
+      headers:
+        cookie:
+          regex: "^(.*?;\\s?)?(beta=true)(;.*)?$"
+    route:
+    - destination:
+        host: helloperson
+        port:
+          number: 8000
+  - route:
+    - destination:
+        host: helloworld
+        port:
+          number: 9000
