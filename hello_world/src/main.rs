@@ -4,8 +4,8 @@
 
 #[cfg(test)] mod tests;
 
-#[get("/hello/<name>")]
-fn hi(name: String) -> &'static str {
+#[get("/hello/<_name>")]
+fn hi(_name: String) -> &'static str {
     "Hello, worldz!"
 }
 
