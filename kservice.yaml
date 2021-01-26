@@ -1,0 +1,73 @@
+# ---
+# apiVersion: messaging.knative.dev/v1beta1
+# kind: KafkaChannel
+# metadata:
+#   name: rusty-channel
+# spec:
+#   numPartitions: 1
+#   replicationFactor: 1
+---
+# hey -z 45s -c 50 http://rusty-world.default.theflcrm.net/
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: rusty-world
+  namespace: default
+  # labels: []
+    # serving.knative.dev/visibility: cluster-local
+spec:
+  template:
+    metadata:
+      annotations:
+        # Standard Kubernetes CPU-based autoscaling.
+        # Target 10 requests in-flight per pod.
+        autoscaling.knative.dev/target: "10"
+        autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
+        # autoscaling.knative.dev/metric: cpu
+        autoscaling.knative.dev/maxScale: "100"
+    spec:
+      containers:
+        - image: treyhyde/hello_world:latest
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "64Mi"
+              cpu: "250m"
+          # Uncomment this to send events somewhere.
+          # env:
+          # - name: K_SINK
+          #   value: http://default-broker.default.svc.cluster.local
+# ---
+# apiVersion: serving.knative.dev/v1
+# kind: Service
+# metadata:
+#   name: rusty-person
+#   namespace: default
+#   # labels: []
+#     # serving.knative.dev/visibility: cluster-local
+# spec:
+#   template:
+#     metadata:
+#       annotations:
+#         # Standard Kubernetes CPU-based autoscaling.
+#         # Target 10 requests in-flight per pod.
+#         autoscaling.knative.dev/target: "10"
+#         autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
+#         # autoscaling.knative.dev/metric: cpu
+#         autoscaling.knative.dev/maxScale: "100"
+#     spec:
+#       containers:
+#         - image: treyhyde/hello_person:latest
+#           resources:
+#             requests:
+#               memory: "64Mi"
+#               cpu: "100m"
+#             limits:
+#               memory: "64Mi"
+#               cpu: "250m"
+#           # Uncomment this to send events somewhere.
+#           # env:
+#           # - name: K_SINK
+#           #   value: http://default-broker.default.svc.cluster.local
